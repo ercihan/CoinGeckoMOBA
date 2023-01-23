@@ -42,10 +42,6 @@ class MainActivity : AppCompatActivity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build() //for network
         StrictMode.setThreadPolicy(policy)//for network
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-                navController.navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

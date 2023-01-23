@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.coingeckomoba.databinding.FragmentFirstBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 
@@ -40,6 +42,25 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         updateRecycleView()
+
+        binding.addStock.setOnClickListener {
+            var response = addingStock()
+            if(response != null){
+                lifecycleScope.launchWhenStarted {
+                    withContext(Dispatchers.Default) {
+                        storeInDB(
+                            response!!.id,
+                            response!!.name,
+                            response!!.imageThumb.small,
+                            response!!.marketData.currentPrice.chf
+                        )
+                    }
+                }
+            }
+            else{
+                binding.message.setText("The coin does not exist.")
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -58,5 +79,26 @@ class FirstFragment : Fragment() {
             }
         }
 
+    }
+    private fun sendReq(stock: String): Response{
+        val gson = Gson()
+        var responseJSON: String = URL("https://api.coingecko.com/api/v3/coins/$stock").readText()
+        var response: Response = gson.fromJson(responseJSON, Response::class.java)
+        return response
+    }
+
+    suspend fun storeInDB(id: String, name: String, imageThumb: String, priceInChf: Double){
+        DbCon.db?.stockDao()?.insertOrUpdateAll(
+            Stock(stockId = id, stockName = name, image = imageThumb, priceChf = priceInChf)
+        )
+    }
+
+    private fun addingStock(): Response?{
+        var response : Response? = null
+        var stockIdForCall : String = binding.stockId.text.toString()
+        if(!stockIdForCall.equals("")){
+            return sendReq(stockIdForCall)
+        }
+        return response
     }
 }

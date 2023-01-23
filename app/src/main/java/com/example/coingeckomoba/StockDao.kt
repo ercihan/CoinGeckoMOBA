@@ -6,8 +6,6 @@ import androidx.room.Query
 import androidx.room.Update
 
 
-
-
 @Dao
 interface StockDao {
     @Query("SELECT * FROM stock")
@@ -20,5 +18,15 @@ interface StockDao {
     fun insertAll(vararg stocks: Stock)
 
     @Update
-    fun update(vararg stock: Stock)
+    fun updateAll(vararg stock: Stock)
+    fun insertOrUpdateAll(vararg coins:Stock) {
+        val coinList:List<Stock> = getAll()
+        coins.forEach {stock ->
+            if(coinList.filter { c -> c.stockId.equals(stock.stockId) }.size>0) {
+                updateAll(stock)
+            }else{
+                insertAll(stock)
+            }
+        }
+    }
 }
