@@ -23,6 +23,7 @@ import java.net.URL
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
+    private var stocks: MutableList<Stock> = mutableListOf() //leere Mutable list
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -33,6 +34,8 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        initializeRecycleView()
+
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -41,11 +44,20 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateRecycleView()
+        var recyclerView: RecyclerView = binding.stocks
+        recyclerView.adapter = StockAdapter(stocks!!)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         binding.addStock.setOnClickListener {
             var response = addingStock()
             if(response != null){
+                stocks.add(Stock(
+                    response!!.id,
+                    response!!.name,
+                    response!!.marketData.currentPrice.chf,
+                    response!!.imageThumb.small)
+                )
+                (recyclerView.adapter as RecyclerView.Adapter).notifyDataSetChanged()
                 lifecycleScope.launchWhenStarted {
                     withContext(Dispatchers.Default) {
                         storeInDB(
@@ -67,14 +79,12 @@ class FirstFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    private fun updateRecycleView(){
-        lifecycleScope.launchWhenStarted {
+    private fun initializeRecycleView(){
+        lifecycleScope.launch{
             withContext(Dispatchers.Default) {
-                var stocks = DbCon.db?.stockDao()?.getAll()
-                if(stocks != null){
-                    var recyclerView: RecyclerView = binding.stocks
-                    recyclerView.adapter = StockAdapter(stocks!!)
-                    recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                var stocksLocal = DbCon.db?.stockDao()?.getAll()
+                if(stocksLocal != null){
+                    stocks = stocksLocal as MutableList<Stock>
                 }
             }
         }
