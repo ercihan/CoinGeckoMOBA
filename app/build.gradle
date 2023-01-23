@@ -53,4 +53,6 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version" //Fuer Room
     annotationProcessor "androidx.room:room-compiler:$room_version" //Fuer Room
     kapt "androidx.room:room-compiler:$room_version" //Fuer Room
+
+    implementation 'com.squareup.picasso:picasso:2.5.2' //for image over uri
 }

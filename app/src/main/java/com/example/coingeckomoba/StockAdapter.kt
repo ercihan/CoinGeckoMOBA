@@ -1,11 +1,11 @@
 package com.example.coingeckomoba
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class StockAdapter(private val list: List<Stock>) : RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
@@ -28,7 +28,7 @@ class StockAdapter(private val list: List<Stock>) : RecyclerView.Adapter<StockAd
             )
         ) {
         private var name: TextView? = null
-        private var image: ImageView? = null //ToDo: Image not displayed..
+        private var image: ImageView? = null
         private var price: TextView? = null
 
         init {
@@ -39,7 +39,7 @@ class StockAdapter(private val list: List<Stock>) : RecyclerView.Adapter<StockAd
 
         fun bind(stock: Stock) {
             name?.text = stock.stockName
-            image?.setImageURI(Uri.parse("https://assets.coingecko.com/coins/images/9351/small/12ships.png?1566485390"))//ToDo: stock.image -> hier fehlt der Doppelpunkt in der URI
+            Picasso.with(this.image?.context).load(stock.image).into(image);
             price?.text = stock.priceChf.toString()
         }
     }
