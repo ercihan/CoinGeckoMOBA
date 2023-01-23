@@ -11,7 +11,7 @@
         android:id="@+id/usernamesCreated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Stocks already stored" />
+        android:text="Stocks already stored (the value is in CHF):" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stocks"
