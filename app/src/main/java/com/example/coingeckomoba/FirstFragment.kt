@@ -51,12 +51,13 @@ class FirstFragment : Fragment() {
         binding.addStock.setOnClickListener {
             var response = addingStock()
             if(response != null){
-                stocks.add(Stock(
+                addStock(Stock(
                     response!!.id,
                     response!!.name,
                     response!!.marketData.currentPrice.chf,
                     response!!.imageThumb.small)
                 )
+
                 (recyclerView.adapter as RecyclerView.Adapter).notifyDataSetChanged()
                 lifecycleScope.launchWhenStarted {
                     withContext(Dispatchers.Default) {
@@ -89,6 +90,12 @@ class FirstFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun addStock(stock: Stock){
+        if(stocks.filter { s-> s.stockId == stock.stockId } == null){
+            stocks.add(stock)
+        }
     }
     private fun sendReq(stock: String): Response{
         val gson = Gson()
