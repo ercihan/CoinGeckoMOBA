@@ -40,49 +40,12 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         updateRecycleView()
-
-        binding.addStock.setOnClickListener {
-                    var response = addingStock()
-                    if(response != null){
-                        lifecycleScope.launchWhenStarted {
-                            withContext(Dispatchers.Default) {
-                                storeInDB(
-                                    response!!.id,
-                                    response!!.name,
-                                    response!!.imageThumb.small,
-                                    response!!.marketData.currentPrice.chf
-                                )
-                            }
-                        }
-                    }
-                    else{
-                        binding.message.setText("The coin does not exist.")
-                    }
-
-                    activity?.runOnUiThread {
-                        updateRecycleView()
-                    }
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    private fun sendReq(stock: String): Response{
-        val gson = Gson()
-        var responseJSON: String = URL("https://api.coingecko.com/api/v3/coins/$stock").readText()
-        var response: Response = gson.fromJson(responseJSON, Response::class.java)
-        return response
-    }
-
-    suspend fun storeInDB(id: String, name: String, imageThumb: String, priceInChf: Double){
-        DbCon.db?.stockDao()?.insertAll(
-            Stock(stockId = id, stockName = name, image = imageThumb, priceChf = priceInChf)
-        )
-    }
-
     private fun updateRecycleView(){
         lifecycleScope.launchWhenStarted {
             withContext(Dispatchers.Default) {
@@ -95,13 +58,5 @@ class FirstFragment : Fragment() {
             }
         }
 
-    }
-    private fun addingStock(): Response?{
-        var response : Response? = null
-        var stockIdForCall : String = binding.stockId.text.toString()
-        if(!stockIdForCall.equals("")){
-            return sendReq(stockIdForCall)
-        }
-        return response
     }
 }
