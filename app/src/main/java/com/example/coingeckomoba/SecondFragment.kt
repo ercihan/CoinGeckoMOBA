@@ -76,9 +76,17 @@ class SecondFragment : Fragment() {
     }
 
     suspend fun storeInDB(id: String, name: String, imageThumb: String, priceInChf: Double){
-        DbCon.db?.stockDao()?.insertAll(
-            Stock(stockId = id, stockName = name, image = imageThumb, priceChf = priceInChf)
-        )
+        if(DbCon.db?.stockDao()?.loadStockById(id) == null){
+            DbCon.db?.stockDao()?.insertAll(
+                Stock(stockId = id, stockName = name, image = imageThumb, priceChf = priceInChf)
+            )
+        }
+        else{
+            DbCon.db?.stockDao()?.update(
+                Stock(stockId = id, stockName = name, image = imageThumb, priceChf = priceInChf)
+            )
+        }
+
     }
 
     private fun addingStock(): Response?{

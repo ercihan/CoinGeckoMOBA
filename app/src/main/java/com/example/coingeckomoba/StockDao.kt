@@ -3,6 +3,10 @@ package com.example.coingeckomoba
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
+
+
+
 
 @Dao
 interface StockDao {
@@ -14,4 +18,7 @@ interface StockDao {
 
     @Insert
     fun insertAll(vararg stocks: Stock)
+
+    @Update
+    fun update(vararg stock: Stock)
 }
