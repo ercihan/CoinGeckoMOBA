@@ -93,14 +93,21 @@ class FirstFragment : Fragment() {
     }
 
     private fun addStock(stock: Stock){
-        if(stocks.filter { s-> s.stockId == stock.stockId } == null){
+        if(stocks.filter { s-> s.stockId == stock.stockId }.size == 0){
             stocks.add(stock)
         }
     }
-    private fun sendReq(stock: String): Response{
+    private fun sendReq(stock: String): Response?{
         val gson = Gson()
-        var responseJSON: String = URL("https://api.coingecko.com/api/v3/coins/$stock").readText()
-        var response: Response = gson.fromJson(responseJSON, Response::class.java)
+        var response : Response? = null
+        try {
+            var responseJSON: String = URL("https://api.coingecko.com/api/v3/coins/$stock").readText()
+            response = gson.fromJson(responseJSON, Response::class.java)
+            binding.message.setText("")
+        }
+        catch (e: Exception){
+            binding.message.setText("This coin does not exist.")
+        }
         return response
     }
 
